@@ -2,6 +2,8 @@
 
 namespace Framework\Http\Router;
 
+use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Framework\Http\Router\Exception\RouteNotFoundException;
 use Psr\Http\Message\ServerRequestInterface;
 
 class Router
@@ -25,7 +27,6 @@ class Router
      * @param ServerRequestInterface $request
      *
      * @return Result
-     * @throws \ErrorException
      */
     public function match(ServerRequestInterface $request): Result
     {
@@ -35,7 +36,7 @@ class Router
             }
         }
 
-        throw new \ErrorException('Matches not found.');
+        throw new RequestNotMatchedException($request);
     }
 
     /**
@@ -43,7 +44,6 @@ class Router
      * @param array  $params
      *
      * @return string
-     * @throws \ErrorException
      */
     public function generate(string $name, array $params = []): string
     {
@@ -53,6 +53,6 @@ class Router
             }
         }
 
-        throw new \ErrorException('Route "' . $name . '" not found.');
+        throw new RouteNotFoundException($name, $params);
     }
 }

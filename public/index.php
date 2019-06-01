@@ -4,6 +4,8 @@ use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
 use App\Http\Action;
 use Framework\Http\ActionResolver;
+use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Framework\Http\Router\Exception\RouteNotFoundException;
 use Zend\Diactoros\Response\HtmlResponse;
 use Zend\Diactoros\Response\SapiEmitter;
 use Zend\Diactoros\ServerRequestFactory;
@@ -33,7 +35,7 @@ try {
     }
     $action = $resolver->resolve($result->getHandler());
     $response = $action($request);
-} catch (ErrorException $e){
+} catch (RequestNotMatchedException|RouteNotFoundException $e){
     $response = new HtmlResponse('Undefined page', 404);
 }
 

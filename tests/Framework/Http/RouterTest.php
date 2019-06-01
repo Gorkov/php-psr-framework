@@ -2,6 +2,8 @@
 
 namespace Tests\Framework\Http;
 
+use Framework\Http\Router\Exception\RequestNotMatchedException;
+use Framework\Http\Router\Exception\RouteNotFoundException;
 use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
 use PHPUnit\Framework\TestCase;
@@ -12,7 +14,6 @@ class RouterTest extends TestCase
 {
     /**
      * @test
-     * @throws \ErrorException
      */
     public function testCorrectMethod()
     {
@@ -34,7 +35,6 @@ class RouterTest extends TestCase
 
     /**
      * @test
-     * @throws \ErrorException
      */
     public function testMissingMethod()
     {
@@ -44,13 +44,27 @@ class RouterTest extends TestCase
 
         $router = new Router($routes);
 
-        $this->expectException(\ErrorException::class);
+        $this->expectException(RequestNotMatchedException::class);
         $router->match($this->buildRequest('DELETE', '/blog'));
     }
 
     /**
      * @test
-     * @throws \ErrorException
+     */
+    public function testMissingRoute()
+    {
+        $routes = new RouteCollection();
+
+        $routes->get('blog_show', '/blog/{id}', 'handler', ['id' => '\d+']);
+
+        $router = new Router($routes);
+
+        $this->expectException(RouteNotFoundException::class);
+        $router->generate('blog', ['id' => '5']);
+    }
+
+    /**
+     * @test
      */
     public function testCorrectAttributes()
     {
@@ -68,7 +82,6 @@ class RouterTest extends TestCase
 
     /**
      * @test
-     * @throws \ErrorException
      */
     public function testIncorrectAttributes()
     {
@@ -78,13 +91,12 @@ class RouterTest extends TestCase
 
         $router = new Router($routes);
 
-        $this->expectException(\ErrorException::class);
+        $this->expectException(RequestNotMatchedException::class);
         $router->match($this->buildRequest('GET', '/blog/slug'));
     }
 
     /**
      * @test
-     * @throws \ErrorException
      */
     public function testGenerate()
     {
@@ -101,7 +113,6 @@ class RouterTest extends TestCase
 
     /**
      * @test
-     * @throws \ErrorException
      */
     public function testGenerateMissingAttributes()
     {
