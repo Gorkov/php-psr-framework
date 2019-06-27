@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\ProfilerMiddleware;
 use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
@@ -26,6 +27,8 @@ $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id' => 
 $router = new Router($routes);
 $resolver = new ActionResolver();
 $pipeline = new Pipeline();
+
+$pipeline->pipe($resolver->resolve(ProfilerMiddleware::class));
 
 ### Running
 
