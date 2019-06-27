@@ -18,6 +18,9 @@ docker-build:
 
 framework-init: framework-composer-install
 
+framework-composer-test:
+	docker-compose run --rm framework-php-cli composer test
+
 framework-composer-install:
 	docker-compose run --rm framework-php-cli composer install
 
