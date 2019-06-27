@@ -1,5 +1,6 @@
 <?php
 
+use Framework\Http\Pipeline\Pipeline;
 use Framework\Http\Router\RouteCollection;
 use Framework\Http\Router\Router;
 use App\Http\Action;
@@ -24,6 +25,7 @@ $routes->get('blog_show', '/blog/{id}', Action\Blog\ShowAction::class, ['id' => 
 
 $router = new Router($routes);
 $resolver = new ActionResolver();
+$pipeline = new Pipeline();
 
 ### Running
 
@@ -34,7 +36,7 @@ try {
         $request = $request->withAttribute($attribute, $value);
     }
     $action = $resolver->resolve($result->getHandler());
-    $response = $action($request);
+    $response = $pipeline($request, $action);
 } catch (RequestNotMatchedException|RouteNotFoundException $e){
     $response = new HtmlResponse('Undefined page', 404);
 }
